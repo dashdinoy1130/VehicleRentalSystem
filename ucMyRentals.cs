@@ -50,6 +50,8 @@ namespace VehicleRentalSystem
                 }
             }
         }
+
+       
         private void StyleGrid()
         {
             dgvMyRentals.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -97,10 +99,7 @@ namespace VehicleRentalSystem
             }
         }
 
-        private void dgvMyRentals_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+      
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
