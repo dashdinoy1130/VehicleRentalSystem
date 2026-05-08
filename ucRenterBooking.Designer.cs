@@ -45,35 +45,37 @@
             panel1.Controls.Add(label1);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1495, 75);
+            panel1.Size = new Size(1308, 56);
             panel1.TabIndex = 0;
             // 
             // lblSearch
             // 
             lblSearch.Anchor = AnchorStyles.None;
             lblSearch.AutoSize = true;
-            lblSearch.Location = new Point(1081, 34);
+            lblSearch.Location = new Point(946, 26);
             lblSearch.Name = "lblSearch";
-            lblSearch.Size = new Size(53, 20);
+            lblSearch.Size = new Size(42, 15);
             lblSearch.TabIndex = 2;
             lblSearch.Text = "Search";
             // 
             // txtSearch
             // 
             txtSearch.Anchor = AnchorStyles.None;
-            txtSearch.Location = new Point(1140, 31);
+            txtSearch.Location = new Point(998, 23);
+            txtSearch.Margin = new Padding(3, 2, 3, 2);
             txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(342, 27);
+            txtSearch.Size = new Size(300, 23);
             txtSearch.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(25, 20);
+            label1.Location = new Point(22, 15);
             label1.Name = "label1";
-            label1.Size = new Size(209, 38);
+            label1.Size = new Size(164, 30);
             label1.TabIndex = 0;
             label1.Text = "Available Fleet";
             // 
@@ -87,21 +89,23 @@
             // 
             flpVehicles.AutoScroll = true;
             flpVehicles.Dock = DockStyle.Fill;
-            flpVehicles.Location = new Point(0, 75);
+            flpVehicles.Location = new Point(0, 0);
+            flpVehicles.Margin = new Padding(3, 2, 3, 2);
             flpVehicles.Name = "flpVehicles";
-            flpVehicles.Padding = new Padding(20);
-            flpVehicles.Size = new Size(1495, 601);
+            flpVehicles.Padding = new Padding(18, 15, 18, 15);
+            flpVehicles.Size = new Size(1308, 507);
             flpVehicles.TabIndex = 2;
             flpVehicles.Paint += flowLayoutPanel1_Paint;
             // 
             // ucRenterBooking
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(flpVehicles);
             Controls.Add(panel1);
+            Controls.Add(flpVehicles);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "ucRenterBooking";
-            Size = new Size(1495, 676);
+            Size = new Size(1308, 507);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
@@ -115,5 +119,7 @@
         private ContextMenuStrip contextMenuStrip1;
         private Label lblSearch;
         private FlowLayoutPanel flpVehicles;
+        private ComboBox comboBox1;
+        private ComboBox comboBox2;
     }
 }

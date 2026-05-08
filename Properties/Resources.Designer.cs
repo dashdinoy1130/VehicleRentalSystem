@@ -63,6 +63,16 @@ namespace VehicleRentalSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap qr {
+            get {
+                object obj = ResourceManager.GetObject("qr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Red_and_Black_Modern_Car_Rental_Instagram_Post {
             get {
                 object obj = ResourceManager.GetObject("Red and Black Modern Car Rental Instagram Post", resourceCulture);

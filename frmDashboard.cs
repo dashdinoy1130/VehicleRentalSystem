@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿// Replace frmDashboard.cs (only small change: wire PointOfSales button if present)
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VehicleRentalSystem
@@ -16,6 +11,7 @@ namespace VehicleRentalSystem
         {
             InitializeComponent();
         }
+
         private void showControl(Control uc)
         {
             pnlMainContent.Controls.Clear();
@@ -35,15 +31,29 @@ namespace VehicleRentalSystem
 
         private void frmDashboard_Load(object sender, EventArgs e)
         {
-
+            // Hide admin/reporting UI for employees
             if (UserSession.Role == "Employee")
             {
-
                 btnReports.Visible = false;
+                btnSalesReport.Visible = false;
+                btnManageUsers.Visible = false;
+            }
+
+            // If a Point of Sales button named 'btnPointOfSales' exists in the Designer, wire it.
+            var posBtn = this.Controls.Find("btnPointOfSales", true).FirstOrDefault() as Button;
+            if (posBtn != null)
+            {
+                posBtn.Visible = (UserSession.Role == "Employee");
+                posBtn.Click -= BtnPointOfSales_Click;
+                posBtn.Click += BtnPointOfSales_Click;
             }
 
             showControl(new ucDashboard());
+        }
 
+        private void BtnPointOfSales_Click(object? sender, EventArgs e)
+        {
+            showControl(new ucPointOfSales());
         }
 
         private void btnManageFleet_Click(object sender, EventArgs e)
@@ -78,6 +88,16 @@ namespace VehicleRentalSystem
         private void pnlMainContent_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnSalesReport_Click(object sender, EventArgs e)
+        {
+            showControl(new ucSalesReport());
+        }
+
+        private void btnManageUsers_Click(object sender, EventArgs e)
+        {
+            showControl(new ucManageUsers());
         }
     }
 }

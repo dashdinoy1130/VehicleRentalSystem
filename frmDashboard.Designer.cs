@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             pnlNavBar = new Panel();
+            btnPointOfSales = new Button();
+            btnSalesReport = new Button();
+            btnManageUsers = new Button();
             pictureBox1 = new PictureBox();
             btnDashboard = new Button();
             btnRentals = new Button();
@@ -43,6 +46,9 @@
             // pnlNavBar
             // 
             pnlNavBar.BackColor = Color.White;
+            pnlNavBar.Controls.Add(btnPointOfSales);
+            pnlNavBar.Controls.Add(btnSalesReport);
+            pnlNavBar.Controls.Add(btnManageUsers);
             pnlNavBar.Controls.Add(pictureBox1);
             pnlNavBar.Controls.Add(btnDashboard);
             pnlNavBar.Controls.Add(btnRentals);
@@ -56,6 +62,47 @@
             pnlNavBar.Size = new Size(1213, 52);
             pnlNavBar.TabIndex = 0;
             pnlNavBar.Paint += pnlNavBar_Paint;
+            // 
+            // btnPointOfSales
+            // 
+            btnPointOfSales.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnPointOfSales.FlatStyle = FlatStyle.Flat;
+            btnPointOfSales.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnPointOfSales.Location = new Point(430, 9);
+            btnPointOfSales.Margin = new Padding(3, 2, 3, 2);
+            btnPointOfSales.Name = "btnPointOfSales";
+            btnPointOfSales.Size = new Size(124, 36);
+            btnPointOfSales.TabIndex = 12;
+            btnPointOfSales.Text = "Point Of Sales";
+            btnPointOfSales.UseVisualStyleBackColor = true;
+            // 
+            // btnSalesReport
+            // 
+            btnSalesReport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSalesReport.FlatStyle = FlatStyle.Flat;
+            btnSalesReport.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnSalesReport.Location = new Point(300, 9);
+            btnSalesReport.Margin = new Padding(3, 2, 3, 2);
+            btnSalesReport.Name = "btnSalesReport";
+            btnSalesReport.Size = new Size(124, 36);
+            btnSalesReport.TabIndex = 11;
+            btnSalesReport.Text = "Sales Report";
+            btnSalesReport.UseVisualStyleBackColor = true;
+            btnSalesReport.Click += btnSalesReport_Click;
+            // 
+            // btnManageUsers
+            // 
+            btnManageUsers.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnManageUsers.FlatStyle = FlatStyle.Flat;
+            btnManageUsers.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnManageUsers.Location = new Point(430, 9);
+            btnManageUsers.Margin = new Padding(3, 2, 3, 2);
+            btnManageUsers.Name = "btnManageUsers";
+            btnManageUsers.Size = new Size(124, 36);
+            btnManageUsers.TabIndex = 10;
+            btnManageUsers.Text = "Manage Users";
+            btnManageUsers.UseVisualStyleBackColor = true;
+            btnManageUsers.Click += btnManageUsers_Click;
             // 
             // pictureBox1
             // 
@@ -177,5 +224,8 @@
         private PictureBox pictureBox1;
         private Button btnDashboard;
         private Panel pnlMainContent;
+        private Button btnManageUsers;
+        private Button btnSalesReport;
+        private Button btnPointOfSales;
     }
 }

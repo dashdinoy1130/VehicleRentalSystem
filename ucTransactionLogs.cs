@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace VehicleRentalSystem
 {
@@ -24,29 +25,45 @@ namespace VehicleRentalSystem
         private void ucTransactionLogs_Load(object sender, EventArgs e)
         {
             LoadTransactionData();
+            cmbStatusFilter.Items.Clear();
+            cmbStatusFilter.Items.Add("All");
+            cmbStatusFilter.Items.Add("Active");
+            cmbStatusFilter.Items.Add("Completed");
+            cmbStatusFilter.Items.Add("Pending Return");
+            cmbStatusFilter.Items.Add("Pending Payment");
+            cmbStatusFilter.SelectedIndex = 0;
         }
         public void LoadTransactionData(string filter = "")
         {
+            string searchText = txtSearchLogs.Text.Trim();
+            string selectedStatus = cmbStatusFilter.SelectedItem?.ToString() ?? "All";
+
             using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
                 try
                 {
-                    string query = "SELECT * FROM Transactions";
+                    conn.Open();
+                    // Base query
+                    string query = "SELECT * FROM Transactions WHERE (RenterName LIKE ? OR PlateNumber LIKE ? OR FullName LIKE ?)";
 
-                    if (!string.IsNullOrEmpty(filter))
+                    // Add Status filter if not "All"
+                    if (selectedStatus != "All")
                     {
-                        query += " WHERE RenterName LIKE ? OR PlateNumber LIKE ? OR FullName LIKE ? OR LicenseNumber LIKE ?";
+                        query += " AND [Status] = ?";
                     }
 
                     OleDbCommand cmd = new OleDbCommand(query, conn);
 
-                    if (!string.IsNullOrEmpty(filter))
+                    // Search parameters
+                    string searchVal = "%" + searchText + "%";
+                    cmd.Parameters.AddWithValue("?", searchVal);
+                    cmd.Parameters.AddWithValue("?", searchVal);
+                    cmd.Parameters.AddWithValue("?", searchVal);
+
+                    // Status parameter
+                    if (selectedStatus != "All")
                     {
-                        string searchVal = "%" + filter + "%";
-                        cmd.Parameters.AddWithValue("?", searchVal);
-                        cmd.Parameters.AddWithValue("?", searchVal);
-                        cmd.Parameters.AddWithValue("?", searchVal);
-                        cmd.Parameters.AddWithValue("?", searchVal);
+                        cmd.Parameters.AddWithValue("?", selectedStatus);
                     }
 
                     OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
@@ -54,32 +71,11 @@ namespace VehicleRentalSystem
                     adapter.Fill(dt);
                     dgvTransactions.DataSource = dt;
 
-                    if (dgvTransactions.Columns.Contains("FullName")) dgvTransactions.Columns["FullName"].HeaderText = "Renter Full Name";
-                    if (dgvTransactions.Columns.Contains("LicenseNumber")) dgvTransactions.Columns["LicenseNumber"].HeaderText = "License No.";
-                    if (dgvTransactions.Columns.Contains("ContactNumber")) dgvTransactions.Columns["ContactNumber"].HeaderText = "Contact No.";
-
-                    if (dgvTransactions.Columns.Contains("TransactionID")) dgvTransactions.Columns["TransactionID"].Visible = false;
-
-                    if (dgvTransactions.Columns.Contains("TotalAmount"))
-                        dgvTransactions.Columns["TotalAmount"].DefaultCellStyle.Format = "₱#,##0.00";
-
-                    dgvTransactions.EnableHeadersVisualStyles = false;
-                    dgvTransactions.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(31, 30, 68);
-                    dgvTransactions.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-                    dgvTransactions.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                    dgvTransactions.ColumnHeadersHeight = 40;
-
-                    dgvTransactions.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
-                    dgvTransactions.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    dgvTransactions.BackgroundColor = Color.White;
-                    dgvTransactions.BorderStyle = BorderStyle.None;
-                    dgvTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-
+                    // (Keep your existing DataGridView formatting code here...)
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error loading logs: " + ex.Message);
+                    MessageBox.Show("Error filtering logs: " + ex.Message);
                 }
             }
         }
@@ -91,18 +87,25 @@ namespace VehicleRentalSystem
                 {
                     string status = row.Cells["Status"].Value.ToString();
 
-                    if (status == "Pending Return")
+                    if (status == "Pending Payment")
+                    {
+                        row.DefaultCellStyle.BackColor = Color.MistyRose; // Soft red for attention
+                        row.DefaultCellStyle.ForeColor = Color.Maroon;
+                    }
+                    else if (status == "Pending Return")
                     {
                         row.DefaultCellStyle.BackColor = Color.LemonChiffon;
                         row.DefaultCellStyle.ForeColor = Color.DarkGoldenrod;
                     }
-                    else if (status == "Completed")
-                    {
-                        row.DefaultCellStyle.ForeColor = Color.Gray;
-                    }
                     else if (status == "Active")
                     {
                         row.DefaultCellStyle.ForeColor = Color.DarkBlue;
+                        row.DefaultCellStyle.BackColor = Color.White;
+                    }
+                    else if (status == "Completed")
+                    {
+                        row.DefaultCellStyle.ForeColor = Color.Gray;
+                        row.DefaultCellStyle.BackColor = Color.White;
                     }
                 }
             }
@@ -168,6 +171,138 @@ namespace VehicleRentalSystem
                 {
                     FinalizeReturn(plate);
                 }
+            }
+        }
+        // Paste this inside the ucTransactionLogs class
+        private void ShowReceiptFromRow(DataGridViewRow row)
+        {
+            // Extracting data safely from the selected row
+            string renterName = row.Cells["FullName"].Value?.ToString() ?? "N/A";
+            string plate = row.Cells["PlateNumber"].Value?.ToString() ?? "N/A";
+            string amount = row.Cells["TotalAmount"].Value?.ToString() ?? "0.00";
+            string method = row.Cells["PaymentMethod"].Value?.ToString() ?? "N/A";
+
+            string receipt = "------------------------------------------\n" +
+                             "          OFFICIAL RECEIPT          \n" +
+                             "------------------------------------------\n" +
+                             $"Customer: {renterName}\n" +
+                             $"Vehicle Plate: {plate}\n" +
+                             $"Payment Method: {method}\n" +
+                             $"Total Paid: {amount}\n" +
+                             "------------------------------------------\n" +
+                             "Status: ACTIVE / PAID\n" +
+                             "Thank you for choosing our service!\n" +
+                             "------------------------------------------";
+
+            MessageBox.Show(receipt, "Receipt Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnConfirmPayment_Click(object sender, EventArgs e)
+        {
+            if (dgvTransactions.SelectedRows.Count > 0)
+            {
+                DataGridViewRow row = dgvTransactions.SelectedRows[0];
+                string status = row.Cells["Status"].Value.ToString();
+                string plate = row.Cells["PlateNumber"].Value.ToString();
+
+                // Ensure we are only confirming pending payments
+                if (status != "Pending Payment")
+                {
+                    MessageBox.Show("This transaction is already active or completed.");
+                    return;
+                }
+
+                using (OleDbConnection conn = new OleDbConnection(connectionString))
+                {
+                    try
+                    {
+                        conn.Open();
+                        // 1. Update Transaction to Active
+                        string updateTrans = "UPDATE Transactions SET [Status] = 'Active' WHERE PlateNumber = ? AND [Status] = 'Pending Payment'";
+                        using (OleDbCommand cmd1 = new OleDbCommand(updateTrans, conn))
+                        {
+                            cmd1.Parameters.AddWithValue("?", plate);
+                            cmd1.ExecuteNonQuery();
+                        }
+
+                        // 2. Update Vehicle to Rented
+                        string updateVeh = "UPDATE Vehicles SET [Status] = 'Rented' WHERE PlateNumber = ?";
+                        using (OleDbCommand cmd2 = new OleDbCommand(updateVeh, conn))
+                        {
+                            cmd2.Parameters.AddWithValue("?", plate);
+                            cmd2.ExecuteNonQuery();
+                        }
+
+                        MessageBox.Show("Payment Confirmed! Vehicle is now marked as Rented.", "Success");
+
+                        // 3. Optional: Trigger Receipt Generation
+                        ShowReceiptFromRow(row);
+
+                        LoadTransactionData(); // Refresh the grid
+                    }
+                    catch (Exception ex) { MessageBox.Show(ex.Message); }
+                }
+            }
+        }
+
+        private void cmbStatusFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadTransactionData();
+        }
+
+        private void txtSearchLogs_TextChanged_1(object sender, EventArgs e)
+        {
+            LoadTransactionData();
+        }
+
+        private void btnDeleteLog_Click(object sender, EventArgs e)
+        {
+            if (dgvTransactions.SelectedRows.Count > 0)
+            {
+                DataGridViewRow row = dgvTransactions.SelectedRows[0];
+
+                // Use the Primary Key (TransactionID) for a safe delete
+                // Based on your screenshot, TransactionID is in the first column
+                string transactionID = row.Cells["TransactionID"].Value.ToString();
+                string status = row.Cells["Status"].Value.ToString();
+
+                // Optional: Safety check - only allow deleting 'Completed' logs
+                if (status != "Completed")
+                {
+                    DialogResult warn = MessageBox.Show("This transaction is not 'Completed'. Are you sure you want to delete a record of an ongoing rental?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (warn == DialogResult.No) return;
+                }
+
+                // Confirmation Dialog
+                DialogResult res = MessageBox.Show("Are you sure you want to permanently delete this transaction log?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (res == DialogResult.Yes)
+                {
+                    using (OleDbConnection conn = new OleDbConnection(connectionString))
+                    {
+                        try
+                        {
+                            conn.Open();
+                            string query = "DELETE FROM Transactions WHERE TransactionID = ?";
+                            using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                            {
+                                cmd.Parameters.AddWithValue("?", transactionID);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            MessageBox.Show("Transaction record deleted successfully.", "Deleted");
+                            LoadTransactionData(); // Refresh the DataGridView
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error deleting record: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a full row to delete.", "Selection Required");
             }
         }
     }

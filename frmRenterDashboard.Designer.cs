@@ -43,9 +43,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(207, 12);
+            label1.Location = new Point(181, 9);
             label1.Name = "label1";
-            label1.Size = new Size(222, 46);
+            label1.Size = new Size(177, 37);
             label1.TabIndex = 14;
             label1.Text = "Renter Portal";
             // 
@@ -54,9 +54,10 @@
             btnMyRentals.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnMyRentals.FlatStyle = FlatStyle.Flat;
             btnMyRentals.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnMyRentals.Location = new Point(1182, 12);
+            btnMyRentals.Location = new Point(939, 9);
+            btnMyRentals.Margin = new Padding(3, 2, 3, 2);
             btnMyRentals.Name = "btnMyRentals";
-            btnMyRentals.Size = new Size(142, 48);
+            btnMyRentals.Size = new Size(124, 36);
             btnMyRentals.TabIndex = 13;
             btnMyRentals.Text = "My Rentals";
             btnMyRentals.UseVisualStyleBackColor = true;
@@ -65,9 +66,10 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.Untitled_design__6_1;
-            pictureBox1.Location = new Point(12, 3);
+            pictureBox1.Location = new Point(10, 2);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(189, 62);
+            pictureBox1.Size = new Size(165, 46);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 9;
             pictureBox1.TabStop = false;
@@ -77,9 +79,10 @@
             btnLogout1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout1.FlatStyle = FlatStyle.Flat;
             btnLogout1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLogout1.Location = new Point(1330, 12);
+            btnLogout1.Location = new Point(1069, 9);
+            btnLogout1.Margin = new Padding(3, 2, 3, 2);
             btnLogout1.Name = "btnLogout1";
-            btnLogout1.Size = new Size(142, 48);
+            btnLogout1.Size = new Size(124, 36);
             btnLogout1.TabIndex = 11;
             btnLogout1.Text = "Logout\r\n";
             btnLogout1.UseVisualStyleBackColor = true;
@@ -90,9 +93,10 @@
             btnBrowseCars.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnBrowseCars.FlatStyle = FlatStyle.Flat;
             btnBrowseCars.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnBrowseCars.Location = new Point(1034, 12);
+            btnBrowseCars.Location = new Point(810, 9);
+            btnBrowseCars.Margin = new Padding(3, 2, 3, 2);
             btnBrowseCars.Name = "btnBrowseCars";
-            btnBrowseCars.Size = new Size(142, 48);
+            btnBrowseCars.Size = new Size(124, 36);
             btnBrowseCars.TabIndex = 10;
             btnBrowseCars.Text = "Browse Cars";
             btnBrowseCars.UseVisualStyleBackColor = true;
@@ -102,8 +106,9 @@
             // 
             pnlRenterContent.Dock = DockStyle.Fill;
             pnlRenterContent.Location = new Point(0, 0);
+            pnlRenterContent.Margin = new Padding(3, 2, 3, 2);
             pnlRenterContent.Name = "pnlRenterContent";
-            pnlRenterContent.Size = new Size(1495, 746);
+            pnlRenterContent.Size = new Size(1213, 560);
             pnlRenterContent.TabIndex = 2;
             pnlRenterContent.Paint += pnlRenterContent_Paint;
             // 
@@ -117,18 +122,20 @@
             panel1.Controls.Add(btnBrowseCars);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1495, 71);
+            panel1.Size = new Size(1213, 53);
             panel1.TabIndex = 15;
             // 
             // frmRenterDashboard
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1495, 746);
+            ClientSize = new Size(1213, 560);
             Controls.Add(panel1);
             Controls.Add(pnlRenterContent);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 2, 3, 2);
             Name = "frmRenterDashboard";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmRenterDashboard";
