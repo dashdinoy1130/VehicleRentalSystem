@@ -62,6 +62,8 @@
             // 
             // chartSales
             // 
+            chartSales.BackColor = Color.Transparent;
+            chartSales.BorderlineColor = Color.Transparent;
             chartArea1.Name = "ChartArea1";
             chartSales.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
@@ -106,6 +108,7 @@
             Controls.Add(panel2);
             Name = "ucSalesReport";
             Size = new Size(1308, 507);
+            Load += ucSalesReport_Load_1;
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)chartSales).EndInit();

@@ -92,7 +92,7 @@
             flpVehicles.Location = new Point(0, 0);
             flpVehicles.Margin = new Padding(3, 2, 3, 2);
             flpVehicles.Name = "flpVehicles";
-            flpVehicles.Padding = new Padding(18, 15, 18, 15);
+            flpVehicles.Padding = new Padding(18, 30, 18, 15);
             flpVehicles.Size = new Size(1308, 507);
             flpVehicles.TabIndex = 2;
             flpVehicles.Paint += flowLayoutPanel1_Paint;

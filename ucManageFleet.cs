@@ -30,7 +30,6 @@ namespace VehicleRentalSystem
             {
                 try
                 {
-                    // Updated query to include VehicleType
                     string query = "SELECT VehicleID, PlateNumber, Brand, Model, VehicleType, PricePerDay, [Status] FROM Vehicles";
                     OleDbDataAdapter adapter = new OleDbDataAdapter(query, conn);
                     DataTable dt = new DataTable();
@@ -40,7 +39,7 @@ namespace VehicleRentalSystem
                     if (dgvFleet.Columns.Contains("VehicleID"))
                         dgvFleet.Columns["VehicleID"].Visible = false;
 
-                    FormatFleetGrid(); // Use our new method here
+                    FormatFleetGrid(); 
                 }
                 catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
             }
@@ -52,18 +51,18 @@ namespace VehicleRentalSystem
             {
                 try
                 {
-                    // Match the order of your Access Table: Plate, Type, Brand, Model, Price
+                   
                     string query = "INSERT INTO Vehicles (PlateNumber, VehicleType, Brand, Model, PricePerDay, [Status]) VALUES (?, ?, ?, ?, ?, 'Available')";
 
                     using (OleDbCommand cmd = new OleDbCommand(query, conn))
                     {
-                        // Order must be 1:1 with the query above
+                    
                         cmd.Parameters.AddWithValue("?", txtPlateNumber.Text.Trim());
-                        cmd.Parameters.AddWithValue("?", cmbVehicleType.Text.Trim()); // Moved to 2nd
-                        cmd.Parameters.AddWithValue("?", txtBrand.Text.Trim());       // Moved to 3rd
+                        cmd.Parameters.AddWithValue("?", cmbVehicleType.Text.Trim());
+                        cmd.Parameters.AddWithValue("?", txtBrand.Text.Trim());       
                         cmd.Parameters.AddWithValue("?", txtModel.Text.Trim());
 
-                        // Since PricePerDay is 'Number' in Access, we convert it to double/decimal
+                      
                         double price = 0;
                         double.TryParse(txtPrice.Text, out price);
                         cmd.Parameters.AddWithValue("?", price);
@@ -99,7 +98,7 @@ namespace VehicleRentalSystem
                         cmd.Parameters.AddWithValue("?", price);
 
                         cmd.Parameters.AddWithValue("?", cmbStatus.Text);
-                        cmd.Parameters.AddWithValue("?", selectedVehicleID); // The WHERE clause ID must be LAST
+                        cmd.Parameters.AddWithValue("?", selectedVehicleID); 
 
                         conn.Open();
                         cmd.ExecuteNonQuery();
@@ -195,20 +194,20 @@ namespace VehicleRentalSystem
         {
             LoadFleetData();
 
-            // Setup the Status ComboBox for Editing a vehicle
+          
             cmbStatus.Items.Clear();
             cmbStatus.Items.AddRange(new object[] { "Available", "Rented", "Pending Return", "Maintenance" });
             cmbStatus.SelectedIndex = 0;
 
-            // Setup the Filter ComboBox (the new one we added)
+         
             cmbStatusFilter.Items.Clear();
             cmbStatusFilter.Items.AddRange(new object[] { "All", "Available", "Rented", "Maintenance" });
-            cmbStatusFilter.SelectedIndex = 0; // Default to "All"
+            cmbStatusFilter.SelectedIndex = 0; 
 
             cmbTypeFilter.Items.Clear();
             cmbTypeFilter.Items.AddRange(new object[] { "All", "Sedan", "SUV", "Hatchback", "Van", "Pickup", "MPV" });
             cmbTypeFilter.SelectedIndex = 0;
-            // Wire up the event for the Filter ComboBox
+
             cmbStatusFilter.SelectedIndexChanged += (s, ev) => ApplyFilters();
             cmbTypeFilter.SelectedIndexChanged += (s, ev) => ApplyFilters();
         }
@@ -240,22 +239,18 @@ namespace VehicleRentalSystem
                 CurrencyManager cm = (CurrencyManager)BindingContext[dgvFleet.DataSource];
                 DataView dv = (DataView)cm.List;
 
-                // 1. Base Search Filter
                 string filter = string.Format(
                     "(PlateNumber LIKE '%{0}%' OR Brand LIKE '%{0}%' OR Model LIKE '%{0}%')",
                     filterValue);
 
-                // 2. Add Status Filter
                 if (selectedStatus != "All")
                     filter += string.Format(" AND Status = '{0}'", selectedStatus);
 
-                // 3. Add Type Filter
                 if (selectedType != "All")
                     filter += string.Format(" AND VehicleType = '{0}'", selectedType);
 
                 dv.RowFilter = filter;
 
-                // Re-apply formatting
                 FormatFleetGrid();
             }
             catch (Exception ex) { MessageBox.Show("Filter Error: " + ex.Message); }

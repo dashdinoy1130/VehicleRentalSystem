@@ -18,18 +18,16 @@ namespace VehicleRentalSystem
         {
             InitializeComponent();
 
-            // ensure combo contains wanted items and the event is wired in designer
+           
             cmbFilter.Items.Clear();
             cmbFilter.Items.AddRange(new object[] { "Day", "Month", "Year" });
 
-            // choose default after component init
+         
             cmbFilter.SelectedIndex = 0;
+
         }
 
-        private void ucSalesReport_Load(object sender, EventArgs e)
-        {
-            LoadChart("Day");
-        }
+   
 
         private void cmbFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -39,7 +37,7 @@ namespace VehicleRentalSystem
 
         private void LoadChart(string filter)
         {
-            // rebuild chart
+        
             chartSales.Series.Clear();
             chartSales.ChartAreas.Clear();
             chartSales.Legends.Clear();
@@ -65,7 +63,7 @@ namespace VehicleRentalSystem
             s.IsValueShownAsLabel = true;
             s.Font = new Font("Arial", 7, FontStyle.Bold);
             s.LabelForeColor = Color.Black;
-            s.IsXValueIndexed = true; // index X values to keep spacing even for string labels
+            s.IsXValueIndexed = true; 
             chartSales.Series.Add(s);
 
             DataTable dt = new DataTable();
@@ -73,7 +71,7 @@ namespace VehicleRentalSystem
 
             if (filter == "Day")
             {
-                // Using Weekday(...,2) makes 1=Monday .. 7=Sunday
+             
                 query = "SELECT Weekday(RentalDate,2) AS DayNum, SUM(TotalAmount) AS Sales " +
                         "FROM Transactions WHERE RentalDate IS NOT NULL " +
                         "GROUP BY Weekday(RentalDate,2) ORDER BY Weekday(RentalDate,2)";
@@ -92,7 +90,7 @@ namespace VehicleRentalSystem
                     map[key] = val;
                 }
 
-                // add all 7 day labels in order; use AddXY with string X to force categorical axis
+           
                 for (int i = 1; i <= 7; i++)
                 {
                     double val = map.ContainsKey(i) ? map[i] : 0;
@@ -110,7 +108,7 @@ namespace VehicleRentalSystem
                 dt = GetData(query);
 
                 string[] months = CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames;
-                // AbbreviatedMonthNames returns 13 entries with last empty, ensure 12 used
+            
                 var monthLabels = new string[12];
                 for (int i = 0; i < 12; i++) monthLabels[i] = months[i];
 
@@ -148,7 +146,7 @@ namespace VehicleRentalSystem
                     map[key] = val;
                 }
 
-                // show 2020..2030 inclusive
+              
                 for (int y = 2020; y <= 2030; y++)
                 {
                     double val = map.ContainsKey(y) ? map[y] : 0;
@@ -161,7 +159,7 @@ namespace VehicleRentalSystem
             chartSales.Invalidate();
         }
 
-        // safe data retrieval
+       
         private DataTable GetData(string query)
         {
             DataTable dt = new DataTable();
@@ -182,25 +180,30 @@ namespace VehicleRentalSystem
             return dt;
         }
 
-        // parse DB value to double, tolerates currency formatting and DBNull
+    
         private double ParseAmountToDouble(object dbValue)
         {
             if (dbValue == null || dbValue == DBNull.Value) return 0;
             string s = dbValue.ToString();
 
-            // If the field is numeric already (no currency symbols), TryParse directly
+       
             if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out double v1) ||
                 double.TryParse(s, NumberStyles.Currency, CultureInfo.CurrentCulture, out v1))
             {
                 return v1;
             }
 
-            // Remove currency symbols, thousands separators but keep digits, dot, minus
+            
             string cleaned = Regex.Replace(s, @"[^0-9\.\-]", "");
             if (double.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out double v2))
                 return v2;
 
             return 0;
+        }
+
+        private void ucSalesReport_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

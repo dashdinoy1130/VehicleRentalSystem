@@ -25,6 +25,7 @@ namespace VehicleRentalSystem
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ucPointOfSales));
             panelTop = new Panel();
             labelTitle = new Label();
@@ -45,6 +46,10 @@ namespace VehicleRentalSystem
             labelPlate = new Label();
             pnlRight = new Panel();
             grpTransaction = new GroupBox();
+            label3 = new Label();
+            label2 = new Label();
+            label1 = new Label();
+            cmbTypeFilter = new ComboBox();
             cmbFleetStatusFilter = new ComboBox();
             btnMarkPaid = new Button();
             picQR = new PictureBox();
@@ -65,7 +70,7 @@ namespace VehicleRentalSystem
             txtCustomer = new TextBox();
             lblCustomer = new Label();
             dgvFleet = new DataGridView();
-            cmbTypeFilter = new ComboBox();
+            contextMenuStrip1 = new ContextMenuStrip(components);
             panelTop.SuspendLayout();
             pnlLeft.SuspendLayout();
             pnlRight.SuspendLayout();
@@ -257,6 +262,9 @@ namespace VehicleRentalSystem
             // 
             // grpTransaction
             // 
+            grpTransaction.Controls.Add(label3);
+            grpTransaction.Controls.Add(label2);
+            grpTransaction.Controls.Add(label1);
             grpTransaction.Controls.Add(cmbTypeFilter);
             grpTransaction.Controls.Add(cmbFleetStatusFilter);
             grpTransaction.Controls.Add(btnMarkPaid);
@@ -285,10 +293,47 @@ namespace VehicleRentalSystem
             grpTransaction.TabStop = false;
             grpTransaction.Text = "Transaction Panel (Walk-ins)";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(633, 91);
+            label3.Name = "label3";
+            label3.Size = new Size(72, 15);
+            label3.TabIndex = 23;
+            label3.Text = "Vehicle Type";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(488, 91);
+            label2.Name = "label2";
+            label2.Size = new Size(39, 15);
+            label2.TabIndex = 22;
+            label2.Text = "Status";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(340, 90);
+            label1.Name = "label1";
+            label1.Size = new Size(99, 15);
+            label1.TabIndex = 21;
+            label1.Text = "Payment Method";
+            // 
+            // cmbTypeFilter
+            // 
+            cmbTypeFilter.FormattingEnabled = true;
+            cmbTypeFilter.Items.AddRange(new object[] { "All", "SUV", "Sedan", "Hatchback" });
+            cmbTypeFilter.Location = new Point(633, 106);
+            cmbTypeFilter.Name = "cmbTypeFilter";
+            cmbTypeFilter.Size = new Size(130, 23);
+            cmbTypeFilter.TabIndex = 20;
+            cmbTypeFilter.SelectedIndexChanged += cmbTypeFilter_SelectedIndexChanged;
+            // 
             // cmbFleetStatusFilter
             // 
             cmbFleetStatusFilter.FormattingEnabled = true;
-            cmbFleetStatusFilter.Location = new Point(483, 106);
+            cmbFleetStatusFilter.Location = new Point(488, 109);
             cmbFleetStatusFilter.Name = "cmbFleetStatusFilter";
             cmbFleetStatusFilter.Size = new Size(122, 23);
             cmbFleetStatusFilter.TabIndex = 19;
@@ -301,6 +346,7 @@ namespace VehicleRentalSystem
             btnMarkPaid.TabIndex = 18;
             btnMarkPaid.Text = "Mark Paid";
             btnMarkPaid.UseVisualStyleBackColor = true;
+            btnMarkPaid.Click += btnMarkPaid_Click_1;
             // 
             // picQR
             // 
@@ -346,7 +392,7 @@ namespace VehicleRentalSystem
             // 
             cmbPayment.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPayment.Items.AddRange(new object[] { "Cash", "GCash" });
-            cmbPayment.Location = new Point(343, 106);
+            cmbPayment.Location = new Point(343, 108);
             cmbPayment.Name = "cmbPayment";
             cmbPayment.Size = new Size(120, 23);
             cmbPayment.TabIndex = 16;
@@ -466,15 +512,10 @@ namespace VehicleRentalSystem
             dgvFleet.TabIndex = 1;
             dgvFleet.CellClick += DgvFleet_CellClick;
             // 
-            // cmbTypeFilter
+            // contextMenuStrip1
             // 
-            cmbTypeFilter.FormattingEnabled = true;
-            cmbTypeFilter.Items.AddRange(new object[] { "All", "SUV", "Sedan", "Hatchback" });
-            cmbTypeFilter.Location = new Point(633, 106);
-            cmbTypeFilter.Name = "cmbTypeFilter";
-            cmbTypeFilter.Size = new Size(130, 23);
-            cmbTypeFilter.TabIndex = 20;
-            cmbTypeFilter.SelectedIndexChanged += cmbTypeFilter_SelectedIndexChanged;
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(61, 4);
             // 
             // ucPointOfSales
             // 
@@ -539,5 +580,9 @@ namespace VehicleRentalSystem
         private PictureBox picQR;
         private ComboBox cmbFleetStatusFilter;
         private ComboBox cmbTypeFilter;
+        private Label label2;
+        private Label label1;
+        private Label label3;
+        private ContextMenuStrip contextMenuStrip1;
     }
 }

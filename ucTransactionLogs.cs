@@ -43,10 +43,9 @@ namespace VehicleRentalSystem
                 try
                 {
                     conn.Open();
-                    // Base query
+                    
                     string query = "SELECT * FROM Transactions WHERE (RenterName LIKE ? OR PlateNumber LIKE ? OR FullName LIKE ?)";
 
-                    // Add Status filter if not "All"
                     if (selectedStatus != "All")
                     {
                         query += " AND [Status] = ?";
@@ -54,13 +53,11 @@ namespace VehicleRentalSystem
 
                     OleDbCommand cmd = new OleDbCommand(query, conn);
 
-                    // Search parameters
                     string searchVal = "%" + searchText + "%";
                     cmd.Parameters.AddWithValue("?", searchVal);
                     cmd.Parameters.AddWithValue("?", searchVal);
                     cmd.Parameters.AddWithValue("?", searchVal);
 
-                    // Status parameter
                     if (selectedStatus != "All")
                     {
                         cmd.Parameters.AddWithValue("?", selectedStatus);
@@ -71,7 +68,7 @@ namespace VehicleRentalSystem
                     adapter.Fill(dt);
                     dgvTransactions.DataSource = dt;
 
-                    // (Keep your existing DataGridView formatting code here...)
+                  
                 }
                 catch (Exception ex)
                 {
@@ -89,7 +86,7 @@ namespace VehicleRentalSystem
 
                     if (status == "Pending Payment")
                     {
-                        row.DefaultCellStyle.BackColor = Color.MistyRose; // Soft red for attention
+                        row.DefaultCellStyle.BackColor = Color.MistyRose; 
                         row.DefaultCellStyle.ForeColor = Color.Maroon;
                     }
                     else if (status == "Pending Return")
@@ -173,10 +170,10 @@ namespace VehicleRentalSystem
                 }
             }
         }
-        // Paste this inside the ucTransactionLogs class
+
         private void ShowReceiptFromRow(DataGridViewRow row)
         {
-            // Extracting data safely from the selected row
+     
             string renterName = row.Cells["FullName"].Value?.ToString() ?? "N/A";
             string plate = row.Cells["PlateNumber"].Value?.ToString() ?? "N/A";
             string amount = row.Cells["TotalAmount"].Value?.ToString() ?? "0.00";
@@ -205,7 +202,7 @@ namespace VehicleRentalSystem
                 string status = row.Cells["Status"].Value.ToString();
                 string plate = row.Cells["PlateNumber"].Value.ToString();
 
-                // Ensure we are only confirming pending payments
+       
                 if (status != "Pending Payment")
                 {
                     MessageBox.Show("This transaction is already active or completed.");
@@ -217,7 +214,7 @@ namespace VehicleRentalSystem
                     try
                     {
                         conn.Open();
-                        // 1. Update Transaction to Active
+        
                         string updateTrans = "UPDATE Transactions SET [Status] = 'Active' WHERE PlateNumber = ? AND [Status] = 'Pending Payment'";
                         using (OleDbCommand cmd1 = new OleDbCommand(updateTrans, conn))
                         {
@@ -225,7 +222,7 @@ namespace VehicleRentalSystem
                             cmd1.ExecuteNonQuery();
                         }
 
-                        // 2. Update Vehicle to Rented
+                     
                         string updateVeh = "UPDATE Vehicles SET [Status] = 'Rented' WHERE PlateNumber = ?";
                         using (OleDbCommand cmd2 = new OleDbCommand(updateVeh, conn))
                         {
@@ -235,10 +232,10 @@ namespace VehicleRentalSystem
 
                         MessageBox.Show("Payment Confirmed! Vehicle is now marked as Rented.", "Success");
 
-                        // 3. Optional: Trigger Receipt Generation
+                       
                         ShowReceiptFromRow(row);
 
-                        LoadTransactionData(); // Refresh the grid
+                        LoadTransactionData();
                     }
                     catch (Exception ex) { MessageBox.Show(ex.Message); }
                 }
@@ -261,19 +258,18 @@ namespace VehicleRentalSystem
             {
                 DataGridViewRow row = dgvTransactions.SelectedRows[0];
 
-                // Use the Primary Key (TransactionID) for a safe delete
-                // Based on your screenshot, TransactionID is in the first column
+            
                 string transactionID = row.Cells["TransactionID"].Value.ToString();
                 string status = row.Cells["Status"].Value.ToString();
 
-                // Optional: Safety check - only allow deleting 'Completed' logs
+          
                 if (status != "Completed")
                 {
                     DialogResult warn = MessageBox.Show("This transaction is not 'Completed'. Are you sure you want to delete a record of an ongoing rental?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (warn == DialogResult.No) return;
                 }
 
-                // Confirmation Dialog
+        
                 DialogResult res = MessageBox.Show("Are you sure you want to permanently delete this transaction log?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (res == DialogResult.Yes)
@@ -291,7 +287,7 @@ namespace VehicleRentalSystem
                             }
 
                             MessageBox.Show("Transaction record deleted successfully.", "Deleted");
-                            LoadTransactionData(); // Refresh the DataGridView
+                            LoadTransactionData(); 
                         }
                         catch (Exception ex)
                         {

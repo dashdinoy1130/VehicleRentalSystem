@@ -1,5 +1,4 @@
-﻿// Replace frmDashboard.cs (only small change: wire PointOfSales button if present)
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,57 +9,45 @@ namespace VehicleRentalSystem
         public frmDashboard()
         {
             InitializeComponent();
+
+            this.DoubleBuffered = true;
         }
 
         private void showControl(Control uc)
         {
-            pnlMainContent.Controls.Clear();
-            uc.Dock = DockStyle.Fill;
-            pnlMainContent.Controls.Add(uc);
-        }
-
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-            UserSession.Username = "";
-            UserSession.Role = "";
-
-            frmLogin login = new frmLogin();
-            login.Show();
-            this.Close();
-        }
-
-        private void frmDashboard_Load(object sender, EventArgs e)
-        {
-            // Hide admin/reporting UI for employees
-            if (UserSession.Role == "Employee")
+            if (pnlMainContent.Controls.Count > 0)
             {
-                btnReports.Visible = false;
-                btnSalesReport.Visible = false;
-                btnManageUsers.Visible = false;
+                Control oldControl = pnlMainContent.Controls[0];
+
+
+                pnlMainContent.Controls.Remove(oldControl);
+
+
+                Application.DoEvents();
+
+
+                oldControl.Dispose();
             }
 
-            // If a Point of Sales button named 'btnPointOfSales' exists in the Designer, wire it.
-            var posBtn = this.Controls.Find("btnPointOfSales", true).FirstOrDefault() as Button;
-            if (posBtn != null)
+            if (uc != null)
             {
-                posBtn.Visible = (UserSession.Role == "Employee");
-                posBtn.Click -= BtnPointOfSales_Click;
-                posBtn.Click += BtnPointOfSales_Click;
+                uc.Dock = DockStyle.Fill;
+                pnlMainContent.Controls.Add(uc);
             }
+        }
 
+
+
+        private void btnDashboard_Click(object sender, EventArgs e)
+        {
             showControl(new ucDashboard());
-        }
-
-        private void BtnPointOfSales_Click(object? sender, EventArgs e)
-        {
-            showControl(new ucPointOfSales());
         }
 
         private void btnManageFleet_Click(object sender, EventArgs e)
         {
-            ucManageFleet fleetControl = new ucManageFleet();
-            showControl(fleetControl);
-            fleetControl.LoadFleetData();
+            ucManageFleet fleet = new ucManageFleet();
+            showControl(fleet);
+            fleet.LoadFleetData();
         }
 
         private void btnRentals_Click(object sender, EventArgs e)
@@ -68,26 +55,11 @@ namespace VehicleRentalSystem
             showControl(new ucTransactionLogs());
         }
 
-        private void btnDashboard_Click(object sender, EventArgs e)
-        {
-            showControl(new ucDashboard());
-        }
-
         private void btnReports_Click(object sender, EventArgs e)
         {
-            ucReports reportsControl = new ucReports();
-            showControl(reportsControl);
-            reportsControl.LoadReportsDashboard();
-        }
-
-        private void pnlNavBar_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pnlMainContent_Paint(object sender, PaintEventArgs e)
-        {
-
+            ucReports reports = new ucReports();
+            showControl(reports);
+            reports.LoadReportsDashboard();
         }
 
         private void btnSalesReport_Click(object sender, EventArgs e)
@@ -98,6 +70,47 @@ namespace VehicleRentalSystem
         private void btnManageUsers_Click(object sender, EventArgs e)
         {
             showControl(new ucManageUsers());
+        }
+
+        private void BtnPointOfSales_Click(object sender, EventArgs e)
+        {
+            showControl(new ucPointOfSales());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            UserSession.Username = "";
+            UserSession.Role = "";
+            new frmLogin().Show();
+            this.Close();
+        }
+
+        private void frmDashboard_Load(object sender, EventArgs e)
+        {
+            if (UserSession.Role == "Employee")
+            {
+                btnReports.Visible = false;
+                btnSalesReport.Visible = false;
+                btnManageUsers.Visible = false;
+            }
+            showControl(new ucDashboard());
+        }
+
+        private void btnPointOfSales_Click_1(object sender, EventArgs e)
+        {
+            showControl(new ucPointOfSales());
+        }
+
+        private void btnTrackRentals_Click(object sender, EventArgs e)
+        {
+            // Initialize the tracking control
+            ucTrackRentals tracking = new ucTrackRentals();
+
+            // Use your existing showControl method to swap the panels
+            showControl(tracking);
+
+            // Call the method to load the data from the database
+            tracking.LoadTrackingData();
         }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             pnlNavBar = new Panel();
+            btnTrackRentals = new Button();
             btnPointOfSales = new Button();
             btnSalesReport = new Button();
             btnManageUsers = new Button();
@@ -46,6 +47,7 @@
             // pnlNavBar
             // 
             pnlNavBar.BackColor = Color.White;
+            pnlNavBar.Controls.Add(btnTrackRentals);
             pnlNavBar.Controls.Add(btnPointOfSales);
             pnlNavBar.Controls.Add(btnSalesReport);
             pnlNavBar.Controls.Add(btnManageUsers);
@@ -61,7 +63,20 @@
             pnlNavBar.Name = "pnlNavBar";
             pnlNavBar.Size = new Size(1213, 52);
             pnlNavBar.TabIndex = 0;
-            pnlNavBar.Paint += pnlNavBar_Paint;
+            // 
+            // btnTrackRentals
+            // 
+            btnTrackRentals.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnTrackRentals.FlatStyle = FlatStyle.Flat;
+            btnTrackRentals.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnTrackRentals.Location = new Point(300, 9);
+            btnTrackRentals.Margin = new Padding(3, 2, 3, 2);
+            btnTrackRentals.Name = "btnTrackRentals";
+            btnTrackRentals.Size = new Size(124, 36);
+            btnTrackRentals.TabIndex = 13;
+            btnTrackRentals.Text = "Track Rentals";
+            btnTrackRentals.UseVisualStyleBackColor = true;
+            btnTrackRentals.Click += btnTrackRentals_Click;
             // 
             // btnPointOfSales
             // 
@@ -75,6 +90,7 @@
             btnPointOfSales.TabIndex = 12;
             btnPointOfSales.Text = "Point Of Sales";
             btnPointOfSales.UseVisualStyleBackColor = true;
+            btnPointOfSales.Click += btnPointOfSales_Click_1;
             // 
             // btnSalesReport
             // 
@@ -193,7 +209,6 @@
             pnlMainContent.Name = "pnlMainContent";
             pnlMainContent.Size = new Size(1213, 508);
             pnlMainContent.TabIndex = 1;
-            pnlMainContent.Paint += pnlMainContent_Paint;
             // 
             // frmDashboard
             // 
@@ -227,5 +242,6 @@
         private Button btnManageUsers;
         private Button btnSalesReport;
         private Button btnPointOfSales;
+        private Button btnTrackRentals;
     }
 }

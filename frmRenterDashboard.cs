@@ -28,7 +28,7 @@ namespace VehicleRentalSystem
         }
         private void frmRenterDashboard_Load(object sender, EventArgs e)
         {
-           
+
             btnBrowseCars.PerformClick();
         }
 
@@ -37,10 +37,27 @@ namespace VehicleRentalSystem
             pnlRenterContent.Controls.Clear();
             uc.Dock = DockStyle.Fill;
             pnlRenterContent.Controls.Add(uc);
+
+
+            if (uc is ucRenterBooking)
+            {
+                cmbFilterType.Visible = true;
+            }
+            else
+            {
+                cmbFilterType.Visible = false;
+            }
         }
         private void btnBrowseCars_Click(object sender, EventArgs e)
         {
             ucRenterBooking browsePage = new ucRenterBooking();
+
+ 
+            if (cmbFilterType.SelectedItem != null)
+            {
+                browsePage.SelectedTypeFilter = cmbFilterType.SelectedItem.ToString();
+            }
+
             showControl(browsePage);
             browsePage.LoadVehiclesFromDatabase();
         }
@@ -78,6 +95,14 @@ namespace VehicleRentalSystem
         private void pnlRenterContent_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void cmbFilterType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (pnlRenterContent.Controls.Count > 0 && pnlRenterContent.Controls[0] is ucRenterBooking bookingUC)
+            {
+                bookingUC.FilterCars(cmbFilterType.SelectedItem.ToString());
+            }
         }
     }
 }

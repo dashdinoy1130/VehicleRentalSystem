@@ -6,11 +6,14 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using QRCoder;
+using System.Drawing.Printing;
 
 namespace VehicleRentalSystem
 {
     public partial class ucPointOfSales : UserControl
     {
+
+
         string connString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Administrator\source\repos\VehicleRentalSystem\VehicleRental.accdb";
 
         private bool pendingGCash = false;
@@ -20,22 +23,21 @@ namespace VehicleRentalSystem
         {
             InitializeComponent();
 
-            // initial setup
             dtpStart.MinDate = DateTime.Now;
             dtpEnd.MinDate = DateTime.Now.AddDays(1);
             lblTotalDays.Text = "Total Days: 0";
 
-            // ensure payment combobox has default
+
             if (cmbPayment.Items.Count == 0)
             {
                 cmbPayment.Items.AddRange(new object[] { "Cash", "GCash" });
                 cmbPayment.SelectedIndex = 0;
             }
 
-            // load fleet
+
             LoadFleet();
 
-            // UI restrictions
+
             bool isEmployee = UserSession.Role == "Employee";
             btnFinalize.Enabled = isEmployee;
             btnReceipt.Enabled = isEmployee;
@@ -43,36 +45,36 @@ namespace VehicleRentalSystem
             picQR.Visible = false;
             btnMarkPaid.Visible = false;
 
-            // Ensure MarkPaid click is wired (defensive)
+
             btnMarkPaid.Click -= BtnMarkPaid_Click;
             btnMarkPaid.Click += BtnMarkPaid_Click;
 
-            // Ensure payment combobox change updates UI (optional)
+
             cmbPayment.SelectedIndexChanged -= CmbPayment_SelectedIndexChanged;
             cmbPayment.SelectedIndexChanged += CmbPayment_SelectedIndexChanged;
 
             cmbFleetStatusFilter.Items.Clear();
             cmbFleetStatusFilter.Items.AddRange(new object[] { "All", "Available", "Rented", "Maintenance" });
-            cmbFleetStatusFilter.SelectedIndex = 0; // Default to "All"
+            cmbFleetStatusFilter.SelectedIndex = 0;
 
             cmbTypeFilter.Items.Clear();
             cmbTypeFilter.Items.AddRange(new object[] { "All", "Sedan", "SUV", "Hatchback", "Van", "Pickup", "MPV" });
             cmbTypeFilter.SelectedIndex = 0;
 
-            // Wire the event
+
             cmbFleetStatusFilter.SelectedIndexChanged += (s, e) => LoadFleet(txtSearch.Text.Trim());
             cmbTypeFilter.SelectedIndexChanged += (s, e) => LoadFleet(txtSearch.Text.Trim());
         }
 
         private void CmbPayment_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            // hide QR/mark paid when switching payment methods
+
             picQR.Visible = false;
             btnMarkPaid.Visible = false;
             pendingGCash = false;
             transactionFinalized = false;
 
-            // re-enable finalize only for employee and non-GCash
+
             bool isEmployee = UserSession.Role == "Employee";
             btnFinalize.Enabled = isEmployee;
         }
@@ -80,7 +82,7 @@ namespace VehicleRentalSystem
         private void LoadFleet(string filter = "")
         {
             string selectedStatus = cmbFleetStatusFilter.SelectedItem?.ToString() ?? "All";
-            string selectedType = cmbTypeFilter.SelectedItem?.ToString() ?? "All"; // Get selected type
+            string selectedType = cmbTypeFilter.SelectedItem?.ToString() ?? "All";
 
             try
             {
@@ -88,7 +90,7 @@ namespace VehicleRentalSystem
                 using (var cmd = new OleDbCommand())
                 {
                     cmd.Connection = conn;
-                    // Updated query to include VehicleType
+
                     string sql = "SELECT PlateNumber, Brand, Model, VehicleType, PricePerDay, [Status] FROM Vehicles WHERE 1=1";
 
                     if (!string.IsNullOrWhiteSpace(filter))
@@ -101,7 +103,7 @@ namespace VehicleRentalSystem
                         sql += " AND [Status] = ?";
                     }
 
-                    // Add the VehicleType filter to the SQL string
+
                     if (selectedType != "All")
                     {
                         sql += " AND VehicleType = ?";
@@ -109,7 +111,7 @@ namespace VehicleRentalSystem
 
                     cmd.CommandText = sql;
 
-                    // Add parameters in the EXACT order they appear in the SQL string
+
                     if (!string.IsNullOrWhiteSpace(filter))
                     {
                         string f = "%" + filter + "%";
@@ -142,13 +144,13 @@ namespace VehicleRentalSystem
             }
         }
 
-        // search box text changed
+
         private void TxtSearch_TextChanged(object sender, EventArgs e)
         {
             LoadFleet(txtSearch.Text.Trim());
         }
 
-        // clicking a fleet row fills left detail fields
+
         private void DgvFleet_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -160,7 +162,7 @@ namespace VehicleRentalSystem
             txtPrice.Text = row.Cells["PricePerDay"].Value?.ToString() ?? "0";
         }
 
-        // Save/Update/Delete operate on Vehicles table (left panel)
+
         private void BtnSave_Click(object sender, EventArgs e)
         {
             try
@@ -240,7 +242,6 @@ namespace VehicleRentalSystem
 
 
 
-        // Calculate total days and amount
         private void DtpStart_ValueChanged(object? sender, EventArgs e) => UpdateTotals();
         private void DtpEnd_ValueChanged(object? sender, EventArgs e) => UpdateTotals();
 
@@ -260,19 +261,19 @@ namespace VehicleRentalSystem
             UpdateTotals();
         }
 
-        // When user clicks Finalize:
+
         private void BtnFinalize_Click(object sender, EventArgs e)
         {
-            // If GCash selected, show QR and require employee to confirm payment
+
             if (string.Equals(cmbPayment.Text, "GCash", StringComparison.OrdinalIgnoreCase))
             {
                 UpdateTotals();
 
-                // generate QR payload
+
                 string payload = $"GCash Payment for {txtPlateNumber.Text} - {lblTotalAmountLabel.Text}";
                 GenerateQRCode(payload);
 
-                // show QR and make MarkPaid clearly actionable
+
                 picQR.Visible = true;
                 picQR.BringToFront();
                 picQR.Enabled = true;
@@ -280,26 +281,26 @@ namespace VehicleRentalSystem
                 pendingGCash = true;
                 transactionFinalized = false;
 
-                // only employees can press Payment Sent — make it enabled and focusable
+
                 btnMarkPaid.Visible = (UserSession.Role == "Employee");
                 btnMarkPaid.Enabled = (UserSession.Role == "Employee");
                 btnMarkPaid.BringToFront();
                 if (btnMarkPaid.Visible && btnMarkPaid.Enabled) btnMarkPaid.Focus();
 
-                // disable finalize to avoid duplicate clicks while waiting
+
                 btnFinalize.Enabled = false;
 
                 MessageBox.Show("Scan the QR to pay. When payment is received, an employee should click Payment Sent to finalize.");
                 return;
             }
 
-            // For cash or other methods finalize immediately
+
             FinalizeTransactionFlow();
             MessageBox.Show("Transaction finalized. You can now generate a receipt.");
             LoadFleet();
         }
 
-        // Employee clicks Payment Sent to finalize GCASH flow
+
         private void BtnMarkPaid_Click(object sender, EventArgs e)
         {
             if (UserSession.Role != "Employee")
@@ -316,21 +317,21 @@ namespace VehicleRentalSystem
 
             FinalizeTransactionFlow();
 
-            // hide QR and button
+
             picQR.Visible = false;
             btnMarkPaid.Visible = false;
             btnMarkPaid.Enabled = false;
             pendingGCash = false;
             transactionFinalized = true;
 
-            // re-enable finalize so UI remains consistent (it's done)
+
             btnFinalize.Enabled = UserSession.Role == "Employee";
 
             ShowReceipt();
             LoadFleet();
         }
 
-        // Single helper that performs DB insert/update (used by Cash finalize and GCash mark paid)
+
         private void FinalizeTransactionFlow()
         {
             if (string.IsNullOrWhiteSpace(txtCustomer.Text) || string.IsNullOrWhiteSpace(txtPlateNumber.Text))
@@ -339,7 +340,7 @@ namespace VehicleRentalSystem
                 return;
             }
 
-            UpdateTotals(); // ensure totals up-to-date
+            UpdateTotals();
 
             try
             {
@@ -404,32 +405,42 @@ namespace VehicleRentalSystem
 
         private void ShowReceipt()
         {
-            var receipt = new System.Text.StringBuilder();
-            receipt.AppendLine("----- RECEIPT -----");
-            receipt.AppendLine($"Operator: {UserSession.Username}");
-            receipt.AppendLine($"Customer: {txtCustomer.Text}");
-            receipt.AppendLine($"License: {txtLicense.Text}");
-            receipt.AppendLine($"Contact: {txtContact.Text}");
-            receipt.AppendLine($"Vehicle: {txtBrand.Text} {txtModel.Text} ({txtPlateNumber.Text})");
-            receipt.AppendLine($"Rental: {dtpStart.Value:d} - {dtpEnd.Value:d}");
-            receipt.AppendLine($"Payment: {cmbPayment.Text}");
-            receipt.AppendLine($"Total: {lblTotalAmountLabel.Text}");
-            receipt.AppendLine("Status: PAID");
+          
+            string vehicleDetails = $"{txtBrand.Text} {txtModel.Text}".PadRight(20);
+            string plateInfo = $"({txtPlateNumber.Text})";
 
-            MessageBox.Show(receipt.ToString(), "Receipt");
+          
+            System.Text.StringBuilder details = new System.Text.StringBuilder();
+            details.AppendLine("VEHICLE DETAILS:");
+            details.AppendLine($"{vehicleDetails} {plateInfo}");
+            details.AppendLine("----------------------------------");
+            details.AppendLine($"Customer: {txtCustomer.Text}");
+            details.AppendLine($"Contact : {txtContact.Text}");
+            details.AppendLine($"Rental  : {dtpStart.Value:d} to {dtpEnd.Value:d}");
+            details.AppendLine($"Payment : {cmbPayment.Text}");
+            details.AppendLine("----------------------------------");
+            details.AppendLine("Status  : PAID");
+
+            
+            string totalAmount = lblTotalAmountLabel.Text.Replace("₱", "").Trim();
+
+           
+            using (frmReceipt receiptForm = new frmReceipt(details.ToString(), totalAmount))
+            {
+                receiptForm.ShowDialog();
+            }
         }
 
-        // helper to parse decimal invariant
+
         private decimal DecimalParseInvariant(string s)
         {
             if (decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal d)) return d;
-            // try to strip non-numeric chars then parse
+
             var cleaned = Regex.Replace(s ?? string.Empty, @"[^0-9\.\-]", "");
             if (decimal.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out d)) return d;
             return 0m;
         }
 
-        // generate QR code (uses QRCoder)
         private void GenerateQRCode(string text)
         {
             try
@@ -439,7 +450,7 @@ namespace VehicleRentalSystem
                 using (var qrCode = new QRCode(qrData))
                 {
                     var bmp = qrCode.GetGraphic(20);
-                    // Dispose previous image safely
+
                     var prev = picQR.Image;
                     picQR.Image = new Bitmap(bmp);
                     prev?.Dispose();
@@ -458,7 +469,7 @@ namespace VehicleRentalSystem
             txtPrice.Text = "0";
         }
 
-        // PASTE IT HERE
+
         private void FormatFleetGrid()
         {
             if (dgvFleet.Columns.Contains("PricePerDay"))
@@ -477,6 +488,11 @@ namespace VehicleRentalSystem
         }
 
         private void cmbTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnMarkPaid_Click_1(object sender, EventArgs e)
         {
 
         }

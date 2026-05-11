@@ -35,6 +35,7 @@
             btnBrowseCars = new Button();
             pnlRenterContent = new Panel();
             panel1 = new Panel();
+            cmbFilterType = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -115,6 +116,7 @@
             // panel1
             // 
             panel1.BackColor = Color.White;
+            panel1.Controls.Add(cmbFilterType);
             panel1.Controls.Add(btnMyRentals);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(pictureBox1);
@@ -126,6 +128,17 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1213, 53);
             panel1.TabIndex = 15;
+            // 
+            // cmbFilterType
+            // 
+            cmbFilterType.FormattingEnabled = true;
+            cmbFilterType.Items.AddRange(new object[] { "All", "Sedan", "SUV", "Van", "Hatchback", "MPV" });
+            cmbFilterType.Location = new Point(648, 17);
+            cmbFilterType.Name = "cmbFilterType";
+            cmbFilterType.Size = new Size(134, 23);
+            cmbFilterType.TabIndex = 15;
+            cmbFilterType.Visible = false;
+            cmbFilterType.SelectedIndexChanged += cmbFilterType_SelectedIndexChanged;
             // 
             // frmRenterDashboard
             // 
@@ -155,5 +168,6 @@
         private Label label1;
         private Panel pnlRenterContent;
         private Panel panel1;
+        private ComboBox cmbFilterType;
     }
 }
